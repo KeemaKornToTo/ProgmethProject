@@ -1,0 +1,975 @@
+@startuml
+' Increase the limit to 16,384 pixels
+!pragma LAYOUT_GRAPHVIZ_DOT_LIMIT 16384
+' ... the rest of your code ...
+class gui.graphics.ScrollingLayer {
+- Image image
+- double offset
+- double speed
+- double yPos
+- double height
+- double canvasWidth
++ void setImage(Image)
++ void update(double)
++ void update(double,double)
++ void render(GraphicsContext)
++ void render(GraphicsContext,Color)
++ boolean isLoaded()
++ Image getImage()
+}
+
+
+class application.CookieRunApp {
++ {static} int WIDTH
++ {static} int HEIGHT
+- Stage primaryStage
+- int selectedCookieIndex
+- int selectedStageIndex
++ void start(Stage)
++ void showHomePage()
++ void showCookieSelect()
++ void showStageSelection()
++ void startGame(int,int)
++ void startGame(int)
+- void setScene(javafx.scene.Parent)
++ int getSelectedCookieIndex()
++ void setSelectedCookieIndex(int)
++ int getSelectedStageIndex()
++ void setSelectedStageIndex(int)
++ {static} void main(String[])
+}
+
+
+class gamelogic.events.GameOverEvent {
+- int finalScore
+- int finalCoins
+- int stageNumber
+- long timestamp
++ String getEventType()
++ long getTimestamp()
++ int getFinalScore()
++ int getFinalCoins()
++ int getStageNumber()
+}
+
+
+class game.obstacles.types.airobstacles.CloudSpike {
++ void render(GraphicsContext)
+}
+
+class gui.pages.HomePageView {
+- CookieRunApp app
+- BaseBackgroundPane backgroundPane
+- HomePageButtonPane buttonPane
+- void loadContentAsync(VBox)
+}
+
+
+interface gamelogic.events.GameEvent {
+~ String getEventType()
+~ long getTimestamp()
+}
+
+class gui.graphics.ParticlePool {
+- List<Particle> available
+- List<Particle> active
+- {static} int INITIAL_POOL_SIZE
++ Particle acquire(double,double)
++ void acquireMultiple(double,double,int)
++ void update(double)
++ List<Particle> getActive()
++ int getPoolSize()
++ int getAvailableCount()
++ int getActiveCount()
+}
+
+
+class core.abilities.MagneticAbility {
+- double magneticRadius
+- double attractionStrength
++ void update(GameController,Cookie,double)
++ void activate()
++ boolean isActive()
++ double getCooldownRemaining()
++ double getCooldownPercent()
++ boolean isPassive()
++ void applyForceToCollectible(Collectible,Cookie)
++ double getMagneticRadius()
+}
+
+
+class gui.pages.StageSelectView {
+- StagesCardRowPane stagesRowPane
+- BaseBackgroundPane backgroundPane
+}
+
+class game.collectibles.JellyBig {
+- {static} double SIZE
+- {static} int SCORE
+# boolean isMagnetic()
++ void render(GraphicsContext)
+}
+
+
+class game.items.HealthItem {
+- double speed
++ void update(double)
++ void render(GraphicsContext)
+}
+
+
+class game.cookies.implementations.BraveGingerbreadCookie {
+}
+interface gamelogic.events.EventListener {
+~ void onEvent(GameEvent)
+}
+
+interface utils.Animatable {
+~ void nextFrame()
+~ void setAnimation(String)
+~ int getCurrentFrame()
+}
+
+class gamelogic.progression.DifficultyManager {
+- {static} DifficultyManager instance
+- Stage currentStage
++ {static} DifficultyManager getInstance()
++ void initializeStage(Stage)
++ void update()
++ double getCurrentGameSpeed()
++ double getSpawnRateMultiplier()
++ Stage getCurrentStage()
++ void reset()
+}
+
+
+class game.config.GameConfig {
++ {static} int WINDOW_WIDTH
++ {static} int WINDOW_HEIGHT
++ {static} boolean RESIZABLE
++ {static} double BASE_GAME_SPEED
++ {static} int TARGET_FPS
++ {static} boolean SHOW_FPS
++ {static} boolean AUDIO_ENABLED
++ {static} double MASTER_VOLUME
++ {static} double MUSIC_VOLUME
++ {static} double SFX_VOLUME
+}
+
+class game.collectibles.Coin {
+- {static} double SIZE
+- {static} int SCORE
+# boolean isMagnetic()
++ void render(GraphicsContext)
+}
+
+
+class gui.graphics.BaseBackgroundPane {
+- Canvas canvas
+- Image backgroundImage
+- double offsetX
+- double velocity
++ void update()
+- void draw()
+}
+
+
+class game.obstacles.types.groundobstacles.CandyWall {
++ void render(GraphicsContext)
+}
+
+class core.Physics {
++ {static} double GRAVITY
++ {static} double JUMP_VELOCITY
++ {static} double GROUND_Y
++ {static} double NORMAL_H
++ {static} double SLIDE_H
+- double x
+- double y
+- double velocityY
+- double startX
+- double startY
+- double width
+- double height
++ void update(double)
++ void jump()
++ boolean isInAir()
++ boolean isOnGround()
++ void setX(double)
++ void setY(double)
++ void setHeight(double)
++ double getX()
++ double getY()
++ double getWidth()
++ double getHeight()
++ double getVelocityY()
++ void setVelocityY(double)
++ void resetToStart()
+}
+
+
+class gui.graphics.Particle {
+- double x
+- double y
+- double vx
+- double vy
+- double life
+- double size
++ void reset(double,double)
++ void update(double)
++ void render(GraphicsContext)
++ boolean isDead()
+}
+
+
+class game.managers.HealthManager {
+- List<HealthItem> healthItems
+- Random rng
+- double healthSpawnTimer
+- double nextSpawnTime
++ void update(double,List<GameObject>)
++ void checkCollision(Cookie)
+- void spawnHealthItems(double,List<GameObject>)
++ List<HealthItem> getHealthItems()
+}
+
+
+class core.stages.StageList {
++ {static} List<Stage> ALL
++ {static} Stage getStage(int)
+}
+
+
+class gamelogic.events.EventBus {
+- {static} EventBus instance
+- Map<String,List<EventListener>> listeners
++ {static} EventBus getInstance()
++ void subscribe(String,EventListener)
++ void unsubscribe(String,EventListener)
++ void publish(GameEvent)
++ void clearAllListeners()
++ int getListenerCount(String)
+}
+
+
+abstract class game.obstacles.AirObstacle {
+# double baseY
+# void updateBehavior(double)
+}
+
+
+abstract class core.entities.base.Cookie {
+# String displayName
+# String tier
+# String hex
+# String iconPath
+# int maxHpValue
+# String cookieAbilityDescription
+# String cookieName
+# Color placeholderColor
+# double hp
+# CookieAbility ability
+# boolean isGhost
++ String getDisplayName()
++ String getTier()
++ String getHex()
++ String getIconPath()
++ int getMaxHpValue()
++ String getCookieAbilityDescription()
++ String getCookieName()
++ Color getPlaceholderColor()
++ double getX()
++ double getY()
++ double getWidth()
++ double getHeight()
++ double getHp()
++ CookieAbility getAbility()
++ boolean isGhost()
++ void setDisplayName(String)
++ void setTier(String)
++ void setHex(String)
++ void setIconPath(String)
++ void setMaxHpValue(int)
++ void setCookieAbilityDescription(String)
++ void setHp(double)
++ void setAbility(CookieAbility)
++ void setGhost(boolean)
++ void setX(double)
++ void setY(double)
++ void setWidth(double)
++ void setHeight(double)
++ void setAlive(boolean)
++ void update(double)
++ void render(javafx.scene.canvas.GraphicsContext)
+}
+
+
+class gui.components.StageSelectionCard {
+- Stage stage
+- StackPane logoPane
+- void buildCard()
+- StackPane buildLogoPane()
+- Color getDifficultyColor(String)
+}
+
+
+class game.cookies.implementations.HeroCookie {
+}
+class game.managers.ObstacleManager {
+- List<Obstacle> obstacles
+- ObjectPool<Spike> spikePool
+- ObjectPool<Block> blockPool
+- ObjectPool<CandyWall> candyWallPool
+- Random rng
+- double obstacleTimer
+- double nextObstacleIn
++ void update(double,double,List<GameObject>)
++ void checkCollision(Cookie,boolean[],double,GameController)
+- void spawnObstacles(double,double,List<GameObject>)
+- Obstacle createObstacle(int,double,double)
++ List<Obstacle> getObstacles()
+}
+
+
+abstract class core.entities.base.GameObject {
+# double x
+# double y
+# double width
+# double height
+# boolean alive
++ {abstract}void update(double)
++ {abstract}void render(GraphicsContext)
++ boolean collides(GameObject)
++ Rectangle2D getBounds()
++ boolean intersects(Collidable)
++ boolean isAlive()
++ void setAlive(boolean)
++ void destroy()
++ boolean isOutOfScreen()
++ double getX()
++ double getY()
++ double getWidth()
++ double getHeight()
+}
+
+
+class game.obstacles.types.groundobstacles.Block {
++ void render(GraphicsContext)
+}
+
+class gamelogic.events.CoinCollectedEvent {
+- int coinValue
+- double posX
+- double posY
+- long timestamp
++ String getEventType()
++ long getTimestamp()
++ int getCoinValue()
++ double getPosX()
++ double getPosY()
+}
+
+
+class game.config.PhysicsConfig {
++ {static} double GRAVITY
++ {static} double JUMP_VELOCITY
++ {static} double GROUND_Y
++ {static} double NORMAL_H
++ {static} double SLIDE_H
+}
+
+class gui.graphics.FontLoader {
++ {static} Font loadFont(String,double)
++ {static} Font getCookieRunBold(double)
+}
+
+abstract class game.collectibles.Collectible {
+# double speed
+# int scoreValue
+# double magneticVelocityX
+# double magneticVelocityY
++ void update(double)
++ {abstract}void render(GraphicsContext)
++ void applyMagneticForce(double,double,double,double)
++ void resetMagneticVelocity()
+# boolean isMagnetic()
++ int getScoreValue()
+}
+
+
+abstract class game.obstacles.GroundObstacle {
+}
+interface utils.Collidable {
+~ Rectangle2D getBounds()
+~ boolean intersects(Collidable)
+}
+
+class game.cookies.CookieList {
++ {static} List<Supplier<Cookie>> ALL
++ {static} Cookie get(int)
++ {static} int size()
+}
+
+
+class gui.components.HomePageButtonPane {
+- CookieRunApp app
++ void createButtons(Image,Image)
+}
+
+
+abstract class core.entities.base.Obstacle {
+# double speed
+# double baseDamage
++ void update(double)
+# void updateBehavior(double)
++ {abstract}void render(GraphicsContext)
++ void setSpeed(double)
++ double getSpeed()
++ double getBaseDamage()
++ void setBaseDamage(double)
+}
+
+
+class gui.components.StagesCardRowPane {
+- List<StageSelectionCard> cards
+- Runnable onStageSelected
+- int selectedIndex
+- void buildStages()
+- void refreshStages()
++ int getSelectedIndex()
+}
+
+
+class gui.components.GameOverPane {
+- Label scoreLbl
+- Label coinsLbl
+- ImageView retryImg
+- ImageView homeImg
+- void buildPane()
+- void setupButtonHoverEffects(ImageView)
++ void setOnRetry(Runnable)
++ void setOnHome(Runnable)
++ void setScore(int)
++ void setCoins(int)
+}
+
+
+class core.abilities.JumpBoostAbility {
+- {static} double JUMP_MULTIPLIER
++ void update(GameController,Cookie,double)
++ void activate()
++ boolean isActive()
++ double getCooldownRemaining()
++ double getCooldownPercent()
++ boolean isPassive()
++ double getJumpVelocityMultiplier()
+}
+
+
+class core.stages.Stage {
+- int id
+- String displayName
+- String description
+- String difficulty
+- double difficultyMultiplier
+- double speedMultiplier
+- double spawnMultiplier
+- String playBackgroundPath
+- String jellyLogoPath
++ int getStageIndex()
++ String getDisplayName()
++ String getPlayBackgroundPath()
++ String getJellyLogoPath()
++ String getDescription()
++ String getDifficulty()
++ double getDifficultyMultiplier()
++ double getSpeedMultiplier()
++ double getSpawnMultiplier()
+}
+
+
+class game.config.ObstacleConfig {
++ {static} double BASE_SPAWN_INTERVAL
++ {static} double SPAWN_VARIATION
+}
+
+class audio.SoundManager {
+- {static} SoundManager instance
+- Map<String,Media> soundEffects
+- Map<String,Media> backgroundMusic
+- MediaPlayer currentMusicPlayer
+- String currentMusicName
+- double sfxVolume
+- double musicVolume
+- boolean soundEnabled
++ {static} SoundManager getInstance()
++ void loadSoundEffect(String,String)
++ void loadBackgroundMusic(String,String)
++ void playSoundEffect(String)
++ void playJumpSound()
++ void playSlideSound()
++ void playHitSound()
++ void playCoinSound()
++ void playJellySound()
++ void playGameOverSound()
++ void playClickSound()
++ void playBackgroundMusic(String)
++ void playBackgroundMusicIfNotPlaying(String)
++ void playHomeMusic()
++ void playSelectionMusic()
++ void playStageMusic(int)
++ void stopBackgroundMusic()
++ void setSFXVolume(double)
++ void setMusicVolume(double)
++ double getSFXVolume()
++ double getMusicVolume()
++ void setSoundEnabled(boolean)
++ boolean isSoundEnabled()
++ void pauseBackgroundMusic()
++ void resumeBackgroundMusic()
++ void initializeSounds()
+}
+
+
+class game.collectibles.JellySmall {
+- {static} double SIZE
+- {static} int SCORE
+# boolean isMagnetic()
++ void render(GraphicsContext)
+}
+
+
+class game.managers.AbilityManager {
+- Map<String,AbilityCooldown> cooldowns
+- CookieAbility activeAbility
+- long abilityStartTime
++ void activateAbility(CookieAbility)
++ void update(double)
++ boolean isOnCooldown(String)
++ double getCooldownRemaining(String)
++ CookieAbility getActiveAbility()
++ void reset()
+}
+
+
+class game.managers.AbilityCooldown {
+- String abilityName
+- double timeRemaining
+- double totalCooldown
++ void update(double)
++ boolean isActive()
++ double getTimeRemaining()
++ double getProgress()
+}
+
+
+class game.obstacles.types.groundobstacles.Spike {
++ void render(GraphicsContext)
+}
+
+class game.config.CollectibleConfig {
++ {static} double BASE_SPAWN_INTERVAL
++ {static} double SPAWN_VARIATION
+}
+
+class game.managers.CookieManager {
+- {static} CookieManager instance
+- Cookie[] cookieCache
+- int selectedCookieIndex
+- Cookie loadedCookie
+- Physics cookiePhysics
+- CookieState cookieState
+- Image[] runFrames
+- Image[] jumpFrames
+- Image[] slideFrames
+- Image[] deadFrames
+- Image[] currentFrames
+- int currentFrame
+- double frameTimer
+- {static} double FRAME_DUR
+- double healEffectTimer
+- double invincibilityTimer
+- {static} double INVINCIBILITY_DURATION
++ {static} CookieManager getInstance()
++ Cookie loadCookie(int)
+- void loadCookieFrames(Cookie)
++ Cookie getLoadedCookie()
++ void preloadCookieResources(int)
++ void onCookieButtonPressed(int)
++ int getSelectedCookieIndex()
++ void setSelectedCookieIndex(int)
++ Cookie previewCookie(int)
++ void unloadCookie()
++ Cookie getCookie(int)
++ Cookie getFreshCookie(int)
++ Cookie getCookieByName(String)
++ int getCookieIndexByName(String)
++ List<Cookie> getCookiesByTier(String)
++ List<Cookie> getAllCookies()
++ int getTotalCookies()
++ String getStatistics()
++ void clearCache()
++ void initializeGameplayState()
+- void loadAnimationFrames()
+- void loadFrameSet(Image[],String,String)
++ void update(Cookie,double)
++ void render(Cookie,GraphicsContext)
+- void drawPlaceholder(Cookie,GraphicsContext)
++ void jump(Cookie)
++ void slideDown(Cookie)
++ void releaseSlide(Cookie)
++ void die(Cookie)
++ void decreaseHp(Cookie,double)
++ void heal(Cookie,double)
++ void setInvincible(boolean)
++ boolean isInvincible()
++ CookieState getState()
++ void resetGameplayState(Cookie)
++ void nextFrame()
++ void setAnimation(String)
++ int getCurrentFrame()
+}
+
+
+enum game.managers.CookieState {
++  RUNNING
++  JUMPING
++  SLIDING
++  DEAD
+}
+
+class game.managers.CollectibleManager {
+- List<Collectible> collectibles
+- ParticlePool particlePool
+- ObjectPool<Coin> coinPool
+- Random rng
+- double collectibleTimer
+- double nextCollectibleIn
++ void update(double,double,List<GameObject>)
++ void checkCollision(Cookie,int[])
+- void spawnParticles(double,double)
+- void spawnCollectibles(double,double,List<GameObject>)
+- void spawnCoinLine(double,List<GameObject>)
+- void spawnJelly(double,List<GameObject>,int)
++ void renderParticles(GraphicsContext)
++ List<Collectible> getCollectibles()
+}
+
+
+class gamelogic.events.ObstacleHitEvent {
+- String obstacleType
+- int damageAmount
+- double posX
+- double posY
+- long timestamp
++ String getEventType()
++ long getTimestamp()
++ String getObstacleType()
++ int getDamageAmount()
++ double getPosX()
++ double getPosY()
+}
+
+
+class core.abilities.GhostAbility {
+- double activeTimer
+- double cooldownTimer
+- {static} double DURATION
+- {static} double COOLDOWN
++ void update(GameController,Cookie,double)
++ void activate()
+- void updateActiveState(Cookie,double)
+- void updateCooldown(double)
++ boolean isActive()
++ double getCooldownRemaining()
++ double getCooldownPercent()
++ boolean isPassive()
+}
+
+
+class game.GameController {
+- {static} GameController instance
+- CookieManager cookieManager
+- DifficultyManager difficultyManager
+- EventBus eventBus
+- double cameraShake
++ {static} double GROUND_Y
++ {static} double GAME_WIDTH
+- Cookie cookie
+- core.stages.Stage stage
+- double difficultyMultiplier
+- ObstacleManager obstacleManager
+- CollectibleManager collectibleManager
+- HealthManager healthManager
+- List<GameObject> gameObjects
+- int score
+- int coins
+- double gameTime
+- double currentSpeed
+- boolean gameOver
+- boolean paused
+- double redOverlayTimer
+- {static} double RED_OVERLAY_TOTAL
++ {static} GameController getInstance()
++ void onJump()
++ void shakeCamera(double)
++ void onSlide()
++ void onReleaseSlide()
++ void onAbility()
++ void togglePause()
++ void update(double)
++ void render(GraphicsContext)
++ int getScore()
++ int getCoins()
++ double getGameTime()
++ boolean isGameOver()
++ boolean isPaused()
++ Cookie getCookie()
++ double getRedOverlayOpacity()
++ void applyMagneticForceToCollectibles(MagneticAbility)
++ double getCameraShake()
++ CookieManager getCookieManager()
++ void resetAll()
++ String getGameInfo()
+}
+
+
+class gui.components.CookieCardsRowPane {
+- int selectedIndex
+- List<CookieSelectionCard> cards
+- void selectCard(int)
++ int getSelectedIndex()
+- int getTierRank(String)
+}
+
+
+class gui.pages.GameStage {
+- {static} double W
+- {static} double H
+- {static} double ABILITY_SIZE
+- {static} double ABILITY_MARGIN
+- CookieRunApp app
+- GameController ctrl
+- Canvas canvas
+- int cookieIndex
+- ScrollingLayer bgLayer
+- Button menuButton
+- long lastNano
+- boolean gameOverShown
+- int frameCounter
+- long lastSecond
+- double displayedFps
+- boolean jumpPressed
+- boolean slidePressed
+- boolean slideReleased
+- boolean abilityPressed
+- List<Updatable> updatables
+- List<Renderable> renderables
+- Button createMenuButton()
+- void loadImages()
+- void bindInput()
+- void handleKeyPressed(KeyCode)
+- void handleKeyReleased(KeyCode)
+- void setupEventListeners()
++ void startGame()
+- void update(double)
+- void render()
+- void applyCameraShake(GraphicsContext)
+- void drawHUD(GraphicsContext)
+- void drawOutlinedText(GraphicsContext,String,double,double)
+- void drawHPBar(GraphicsContext)
+- void drawAbilityHUD(GraphicsContext)
+- void drawPauseOverlay(GraphicsContext)
+- void drawRedOverlay(GraphicsContext)
+- void showGameOver()
+}
+
+
+interface utils.Renderable {
+~ void render(GraphicsContext)
+}
+
+class game.cookies.implementations.ZombieCookie {
+}
+class gui.pages.CookieSelectView {
+- CookieCardsRowPane cookieCardsRowPane
+- BaseBackgroundPane backgroundPane
+}
+
+interface utils.Spawnable {
+~ boolean isAlive()
+~ void setAlive(boolean)
+~ double getX()
+}
+
+class gamelogic.events.HealthChangedEvent {
+- int oldHealth
+- int newHealth
+- String reason
+- long timestamp
++ String getEventType()
++ long getTimestamp()
++ int getOldHealth()
++ int getNewHealth()
++ String getReason()
+}
+
+
+class game.obstacles.types.airobstacles.Fireball {
++ void render(GraphicsContext)
+}
+
+class gui.baseElements.BaseImageButton {
+# {static} double DEFAULT_SCALE
+# {static} double DEFAULT_WIDTH
+# {static} double DEFAULT_HEIGHT
+# {static} double DEFAULT_HOVER_OPACITY
+# {static} double DEFAULT_NORMAL_OPACITY
+# DropShadow glowEffect
+# double hoverScale
+# String imagePath
+# String glowColor
+- void initializeButton()
+# void setupGlowEffect()
+# void setupHoverEffects()
+# void onHoverEnter()
+# void onHoverExit()
+# String getImagePath()
+# String getGlowColor()
+# double getButtonWidth()
+# double getButtonHeight()
+# double getHoverScale()
+# double getGlowOpacity()
+}
+
+
+class gui.components.CookieSelectionCard {
+- Cookie cookie
+- int index
+- int originalIndex
+- StackPane iconPane
+- void buildCard()
+- StackPane buildIconPane()
++ Cookie getCookie()
++ int getOriginalIndex()
+}
+
+
+interface core.abilities.CookieAbility {
+~ void update(GameController,Cookie,double)
+~ void activate()
+~ boolean isActive()
+~ double getCooldownRemaining()
+~ double getCooldownPercent()
+~ boolean isPassive()
+}
+
+enum core.entities.base.State {
++  RUNNING
++  JUMPING
++  SLIDING
++  DEAD
+}
+
+class game.obstacles.types.airobstacles.Bat {
++ void render(GraphicsContext)
+}
+
+class gui.baseElements.BaseCard {
+# boolean selected
+# VBox upPane
+# HBox downPane
+# String selectedStyle
+# String normalStyle
+# String hoverStyle
+# double hoverScale
+# void initializePanes(double,double)
+# void initializeDefaults()
+# void setupHoverEffects()
+# void onHoverEnter()
+# void onHoverExit()
++ void setSelected(boolean)
+# void applyNormalStyle()
+# void applySelectedStyle()
+# void applyCurrentStyle()
++ void applyHoverStyle()
++ void resetHoverStyle()
+}
+
+
+class core.pooling.ObjectPool {
+- Queue<T> available
+- Set<T> inUse
+- Supplier<T> factory
+- int maxSize
++ T acquire()
++ void release(T)
++ int getAvailableCount()
++ int getInUseCount()
++ void clear()
+}
+
+
+class game.cookies.implementations.PirateCookie {
+}
+interface utils.Updatable {
+~ void update(double)
+}
+
+class game.cookies.implementations.BlueberryCookie {
+}
+
+
+utils.Renderable <|.. gui.graphics.ScrollingLayer
+utils.Updatable <|.. gui.graphics.ScrollingLayer
+javafx.application.Application <|-- application.CookieRunApp
+gamelogic.events.GameEvent <|.. gamelogic.events.GameOverEvent
+game.obstacles.AirObstacle <|-- game.obstacles.types.airobstacles.CloudSpike
+javafx.scene.layout.StackPane <|-- gui.pages.HomePageView
+core.abilities.CookieAbility <|.. core.abilities.MagneticAbility
+javafx.scene.layout.StackPane <|-- gui.pages.StageSelectView
+game.collectibles.Collectible <|-- game.collectibles.JellyBig
+core.entities.base.GameObject <|-- game.items.HealthItem
+core.entities.base.Cookie <|-- game.cookies.implementations.BraveGingerbreadCookie
+game.collectibles.Collectible <|-- game.collectibles.Coin
+javafx.scene.layout.StackPane <|-- gui.graphics.BaseBackgroundPane
+game.obstacles.GroundObstacle <|-- game.obstacles.types.groundobstacles.CandyWall
+utils.Renderable <|.. gui.graphics.Particle
+utils.Updatable <|.. gui.graphics.Particle
+core.entities.base.Obstacle <|-- game.obstacles.AirObstacle
+core.entities.base.GameObject <|-- core.entities.base.Cookie
+gui.baseElements.BaseCard <|-- gui.components.StageSelectionCard
+core.entities.base.Cookie <|-- game.cookies.implementations.HeroCookie
+utils.Renderable <|.. core.entities.base.GameObject
+utils.Updatable <|.. core.entities.base.GameObject
+utils.Collidable <|.. core.entities.base.GameObject
+utils.Spawnable <|.. core.entities.base.GameObject
+game.obstacles.GroundObstacle <|-- game.obstacles.types.groundobstacles.Block
+gamelogic.events.GameEvent <|.. gamelogic.events.CoinCollectedEvent
+core.entities.base.GameObject <|-- game.collectibles.Collectible
+core.entities.base.Obstacle <|-- game.obstacles.GroundObstacle
+javafx.scene.layout.VBox <|-- gui.components.HomePageButtonPane
+core.entities.base.GameObject <|-- core.entities.base.Obstacle
+javafx.scene.layout.HBox <|-- gui.components.StagesCardRowPane
+javafx.scene.layout.Pane <|-- gui.components.GameOverPane
+core.abilities.CookieAbility <|.. core.abilities.JumpBoostAbility
+game.collectibles.Collectible <|-- game.collectibles.JellySmall
+game.obstacles.GroundObstacle <|-- game.obstacles.types.groundobstacles.Spike
+utils.Animatable <|.. game.managers.CookieManager
+gamelogic.events.GameEvent <|.. gamelogic.events.ObstacleHitEvent
+core.abilities.CookieAbility <|.. core.abilities.GhostAbility
+utils.Renderable <|.. game.GameController
+utils.Updatable <|.. game.GameController
+javafx.scene.layout.HBox <|-- gui.components.CookieCardsRowPane
+javafx.scene.layout.StackPane <|-- gui.pages.GameStage
+core.entities.base.Cookie <|-- game.cookies.implementations.ZombieCookie
+gui.pages.StackPane <|-- gui.pages.CookieSelectView
+gamelogic.events.GameEvent <|.. gamelogic.events.HealthChangedEvent
+game.obstacles.AirObstacle <|-- game.obstacles.types.airobstacles.Fireball
+javafx.scene.image.ImageView <|-- gui.baseElements.BaseImageButton
+gui.baseElements.BaseCard <|-- gui.components.CookieSelectionCard
+game.obstacles.AirObstacle <|-- game.obstacles.types.airobstacles.Bat
+javafx.scene.layout.VBox <|-- gui.baseElements.BaseCard
+core.entities.base.Cookie <|-- game.cookies.implementations.PirateCookie
+core.entities.base.Cookie <|-- game.cookies.implementations.BlueberryCookie
+@enduml
